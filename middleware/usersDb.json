@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "user_name": "KhaiHo",
+        "password" : "202cb962ac59075b964b07152d234b70",
+        "role_id" : 1
+    },
+    {
+        "id": 2,
+        "user_name": "AnhNinh",
+        "password" : "202cb962ac59075b964b07152d234b70",
+        "role_id" : 2
+    }
+]
