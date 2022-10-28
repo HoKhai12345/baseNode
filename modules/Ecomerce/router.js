@@ -1,13 +1,14 @@
 var express = require('express');
-// var router = express.Router();
-var checkAgeMiddleware = require('../../middleware/checkAgeMiddleware');
-var authTokenMiddleware = require('../../middleware/authTokenMiddleware');
-var PostController = require('./controller/PostController');
-var LoginController = require('./controller/LoginController');
-
+const { body } = require('express-validator');
+const ProductRequest = require('./requests/ProductRequest');
+const PostController = require('./controller/PostController');
+const ProductController = require('./controller/ProductController');
 module.exports = (router) => {
         router.get('/api/ecomerce/index' ,  PostController.index);
-        router.get('/api/ecomerce/store' ,  PostController.store);
-        router.get('/api/ecomerce/update' ,  PostController.update);
-        router.get('/api/ecomerce/delete' ,  PostController.delete);
+        router.post('/api/ecomerce/store' ,  PostController.store);
+        router.put('/api/ecomerce/update/:id' ,  PostController.update);
+        router.delete('/api/ecomerce/delete/:id' ,  PostController.delete);
+        // route của products
+        router.get('/api/ecomerce/products/index', ProductController.index);
+        router.post('/api/ecomerce/products/store', ProductRequest.create , ProductController.store);
 }
