@@ -1,10 +1,10 @@
 'use strict';
-const Post = require('./products');
+const Products = require('./products');
 
 const {
   Model
 } = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => { 
   class Categories extends Model {
     /**
      * Helper method for defining associations.
@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // this.hasMany(models.Products , {as: "products"});
     }
   }
   Categories.init({
@@ -24,9 +25,35 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Categories',
   });
 
+  const Products = sequelize.define('Products', {
+    // Model attributes are defined here
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+  });   
+  const Cate = sequelize.define('Categories', {
+  // Model attributes are defined here
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    thumbnail: {
+      type: DataTypes.STRING
+    }
+    });
+
+  // `sequelize.define` also returns the model
+  console.log(Cate === sequelize.models.Categories); // true
+  Cate.hasMany(Products , {as: "products"});
+  var promise = new Promise(function(resolve, reject) {
+  const test =  Cate.findAll({ include: ["products"] });
+  resolve(test);
+  });
+  promise.then(function(data){
+  console.log("DATA" , data);
+  })
   return Categories
 
   //! Define relationship to each class here
-
-  // Categories.hasMany(Post, {as: 'products'})
 }

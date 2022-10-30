@@ -1,5 +1,4 @@
 var express = require('express');
-var userRouters = require('./Post/router');
 var path = require('path');
 var app = express();
 var fs = require("fs");
@@ -25,8 +24,6 @@ app.use(session({
   saveUninitialized: true, 
   secret: 'somesecret', 
   cookie: { maxAge: 60000 }}));
-// Lưu ý: userRouters và index.js phải ở cùng 1 thư mục
-app.use('/post', userRouters);
 
 
 fs.readdir(path.join('modules'), (err, data) => { 

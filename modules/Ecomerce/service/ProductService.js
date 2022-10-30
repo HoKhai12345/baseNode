@@ -1,6 +1,7 @@
 const coreModels = require('../models/index');
 const {Op} = require('sequelize');
-const model = coreModels.Products
+const { param } = require('express-validator');
+const productsModel = coreModels.Products
 const cateModel = coreModels.Categories
 
 const ProductService = {
@@ -15,20 +16,40 @@ const ProductService = {
             }
         }
         // querry lấy tất cả bản ghi với điều kiện where
-        const products = await model.findAll({
+        const products = await productsModel.findAll(
+        {
             where: where,
             offset: offset,
             limit: limit
-        })
+        },
+        // { include: ['cate']}
+        );
+
         return products
     },
     insert: async (params) => {
-        const products = await model.create({
-            params
-        })
+        try {
+            const products = await productsModel.create(
+                params
+            )
+            return products
+        }catch(error){
+            return false
+        }
+    },
+    update: async (params , id) => {
+        try {
+            const products = await productsModel.update(
+                params,
+                {
+                    where: { id: id }
+                }
+            );
+            return products
+        }catch(error){
+            return false
+        }
     }
-
-
 }
 
 module.exports = ProductService
