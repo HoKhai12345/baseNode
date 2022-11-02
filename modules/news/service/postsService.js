@@ -1,6 +1,8 @@
 const coreModels = require('../models/index');
 const productsModel = coreModels.Products
 const postsModel = coreModels.Posts
+const usersModel = coreModels.User
+const catgoryModel = coreModels.Categories
 
 const postsService = {
     cachePrefix: 'PRODUCT_',
@@ -34,11 +36,19 @@ const postsService = {
                 where: where,
                 offset: offset,
                 limit: limit,
-                include: ['cate']
+                include: [{
+                    model: usersModel,
+                    as: 'creator'
+                  },
+                  {
+                    model: catgoryModel,
+                    as: 'categories'
+                  }
+                ]
             },
         );
 
-        return products
+        return posts
     },
     insert: async (params) => {
         try {
