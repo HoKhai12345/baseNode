@@ -32,6 +32,7 @@ fs.readdir(path.join('modules'), (err, data) => {
     require(`./modules/${module}/router`)(app) 
   })
 })
+
 var server = app.listen(port, function () {
   // var host = server.address().address
   var host = process.env.HOST || "localhost"

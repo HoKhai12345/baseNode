@@ -39,10 +39,5 @@ module.exports = {
                 });
             }
         }
-        // Trả về kết quả 
-        return res.json({
-            status: 1,
-            code: 200,
-        });
     },
 }

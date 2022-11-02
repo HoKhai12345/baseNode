@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Categories.init({
     name: DataTypes.STRING,
-    thumbnail: DataTypes.STRING
   }, {
     sequelize: sequelize,
     tableName: 'categories',
@@ -38,21 +37,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    thumbnail: {
-      type: DataTypes.STRING
-    }
   });
 
-  // `sequelize.define` also returns the model
-  console.log(Cate === sequelize.models.Categories); // true
-  Cate.hasMany(Products, { as: "products" });
-  var promise = new Promise(function (resolve, reject) {
-    const test = Cate.findAll({ include: ["products"] });
-    resolve(test);
-  });
-  promise.then(function (data) {
-    // console.log("DATA" , data);
-  })
+  // // `sequelize.define` also returns the model
+  // console.log(Cate === sequelize.models.Categories); // true
+  // Cate.hasMany(Products, { as: "products" });
+  // var promise = new Promise(function (resolve, reject) {
+  //   const test = Cate.findAll({ include: ["products"] });
+  //   resolve(test);
+  // });
+  // promise.then(function (data) {
+  //   // console.log("DATA" , data);
+  // })
   return Categories
 
   //! Define relationship to each class here

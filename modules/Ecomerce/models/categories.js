@@ -44,15 +44,15 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   // `sequelize.define` also returns the model
-  console.log(Cate === sequelize.models.Categories); // true
-  Cate.hasMany(Products, { as: "products" });
-  var promise = new Promise(function (resolve, reject) {
-    const test = Cate.findAll({ include: ["products"] });
-    resolve(test);
-  });
-  promise.then(function (data) {
-    // console.log("DATA" , data);
-  })
+  // console.log(Cate === sequelize.models.Categories); // true
+  // Cate.hasMany(Products, { as: "products" });
+  // var promise = new Promise(function (resolve, reject) {
+  //   const test = Cate.findAll({ include: ["products"] });
+  //   resolve(test);
+  // });
+  // promise.then(function (data) {
+  //   // console.log("DATA" , data);
+  // })
   return Categories
 
   //! Define relationship to each class here

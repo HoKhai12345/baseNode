@@ -1,8 +1,18 @@
 const jwt = require("jsonwebtoken");
+const usersService = require("../modules/news/service/usersService");
 module.exports = async (req, res, next) => {
 
-    const token =
-        req.body.token || req.query.token || req.headers["x-access-token"] || req.header('Authorization').replace('Bearer ', '');
+    let token = "";
+
+    var stringUrl = req.originalUrl;
+    // Tách chuỗi url thành mảng 
+    var arrayUrl = stringUrl.split('/');
+    const prefixPage = arrayUrl[3] ? arrayUrl[3] : 0;
+    console.log("prefixPage", prefixPage);
+    // Lấy ra được các chuyên mục muốn được vào thao tác 
+    if (req.header('Authorization') != undefined) {
+        token = req.header('Authorization').replace('Bearer ', '');
+    }
 
     if (!token) {
         return res.status(403).json({
@@ -12,13 +22,44 @@ module.exports = async (req, res, next) => {
         });
     }
     try {
-        const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
-        next();
+        const users = jwt.verify(token, process.env.PRIVATE_KEY);
+        console.log("decoded", users);
+        const roleUsers = await usersService.checkRole(users.userId);
+        if (roleUsers === false) {
+            return res.status(401).json({
+                status: 0,
+                code: 401,
+                message: "Không tìm thấy token hợp lệ"
+            });
+        } else {
+            arrayRoleUser = roleUsers.roles;
+            // tìm quyền hợp lệ cho user
+            var fillRoleAdmin = arrayRoleUser.filter(function (roles) {
+                return roles.id == 1;
+            });
+            console.log("fillRole.length", fillRoleAdmin.length);
+            if (!fillRoleAdmin || fillRoleAdmin.length == 0) {
+                if (prefixPage == 'posts') {
+                    next();
+                }
+                else if (prefixPage == 'cate') {
+                    next();
+                } else {
+                    return res.status(401).json({
+                        status: 0,
+                        code: 401,
+                        message: "Không tìm thấy token hợp lệ"
+                    });
+                }
+            } else {
+                next();
+            }
+        }
     } catch (error) {
-        res.status(401).json({
+        return res.status(401).json({
             status: 0,
             code: 401,
-            message: "Không tìm thấy token"
+            message: "Không tìm thấy token hợp lệ"
         });
     }
 }
