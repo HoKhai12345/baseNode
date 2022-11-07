@@ -13,6 +13,7 @@ const configUploadImg = require('../news/config/uploadImg');
 const postsRequest = require('./requests/postsRequest');
 const cateRequest = require('./requests/cateRequest');
 const multer = require('multer');
+const categoryService = require('./service/usersService');
 // SET STORAGE
 var storage = multer.diskStorage({
         destination: function (req, file, cb) {
@@ -51,7 +52,6 @@ module.exports = (router) => {
         // Nested
         router.post('/api/nested_list/create', categoryController.storeNestedList);
         router.delete('/api/nested_list/delete/:id', categoryController.deleteNestedList);
-
-        router.post('/api/test', categoryController.test);
+        router.put('/api/nested_list/update/:id', categoryController.updateNestedList);
 
 }

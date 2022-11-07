@@ -186,7 +186,28 @@ module.exports = {
         });
     },
 
-    test: async () => {
-       categoryService.test();
+    updateNestedList: async (req, res) => {
+        const id = req.params.id ? req.params.id : null;
+        const idParentNew = req.body.idParentNew ? req.body.idParentNew : null;
+        const name = req.body.name ? req.body.name : null;
+        const path = req.body.path ;
+        const status = req.body.status ? req.body.status : 1;
+       // check id tôn tai
+        const checkIdExists = await categoryService.checkExists(id)
+        if (!id || checkIdExists === false) {
+            return res.json({
+                status: 0,
+                code: 400,
+                message: "Không tìm thấy id phù hợp"
+            });
+        }
+        // nếu như id parent news == null thì không cập nhật nodes
+        const cate = categoryService.updateNodesNestedList(id, name, path, status, idParentNew);
+           return res.json({
+            status: 1,
+            code: 200,
+            message: "Update bản ghi thành công"
+        });
+        
     }
 }

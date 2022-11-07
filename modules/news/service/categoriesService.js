@@ -218,8 +218,8 @@ const categoryService = {
             // Update level cho các con lên vị trí của cha
             const updateNodesChildUpLevel = await cateModel.update(
                 {
-                    lft: 100,
-                    rgt: 100
+                    lft: this.lft -1,
+                    rgt: this.rgt -1 
                 },
                 {
                     where: {
@@ -237,8 +237,8 @@ const categoryService = {
             console.log("DELETEE SAU",updateNodesChildUpLevel);
             const updateRightNodes = await cateModel.update(
                 {
-                    lft: this.lft,
-                    rgt: this.rgt
+                    lft: this.lft -2,
+                    rgt: this.rgt -2
                 },
                 {
                     where: {
@@ -259,19 +259,113 @@ const categoryService = {
         }
     },
 
-    test : async () => {
-        const updateRightNodes = await cateModel.update(
-            {
-                lft: 100,
-                rgt: "TEST"
-            },
+    updateNodesNestedList: async (id, name, path, status, idParentNew) => {
+        try {
+            console.log("idParentNew", idParentNew);
+       // Không cập nhật nodes
+       if (!idParentNew) {
+        const cate = await cateModel.update(
+         {
+             name: name,
+             path: path,
+             status: status
+         },
+         {
+             where: {
+                 id: id
+             }
+         }
+        );
+     }
+     let nodesRightParent = 0
+     // Trường hợp muốn update lên bậc root cha lớn nhất 
+     if (idParentNew == 'root') {
+        // Lấy ra right lớn nhất 
+        const cateMax = await cateModel.findOne({
+            attributes: [[cateModel.sequelize.fn('max', cateModel.sequelize.col('rgt')), 'rgt']
+            ],
+        });
+        nodesRightParent = cateMax.dataValues.rgt
+    }else {
+        const parentNewsRecord = await cateModel.findOne({
+            where: {
+                id: idParentNew
+            }
+        });
+        nodesRightParent = parentNewsRecord.dataValues.rgt
+    }
+        // Lấy ra bản ghi với id cha 
+        const cateRecordById = await cateModel.findOne(
             {
                 where: {
-                    id: 58
+                    id: id
                 }
             }
         );
+        console.log("cateRecordById" , cateRecordById);
+        // Lấy ra khối cần di chuyển
+        const cateMoveUpdate = await cateModel.findAll({
+                where: {
+                    [Op.and]: [{
+                        lft: { [Op.gte]: cateRecordById.lft, },
+                    },
+                    {
+                        rgt: { [Op.lte]: cateRecordById.rgt, }
+                    }
+                    ]
+                }
+            
+        });
+        // Lấy ra size của khối 
+        const widthSizeNodes = cateRecordById.rgt - cateRecordById.lft + 1;
+        // Update di chuyển khối sang 1 hệ số lft rgt ảo
+        const sessionNodes = await cateModel.update(
+            {
+                name: name,
+                path: path,
+                status: status,
+                lft: (nodesRightParent - cateRecordById.lft) + this.lft,
+                rgt: (nodesRightParent - cateRecordById.lft) + this.rgt
+            },
+            {
+                where: {
+                    [Op.and]: [{
+                        lft: { [Op.gte]: cateRecordById.lft, },
+                    },
+                    {
+                        rgt: { [Op.lte]: cateRecordById.rgt, }
+                    }
+                    ]
+                }
+            }
+        );
+        // Update cập nhật lại các nút cho đúng lft , rgt
+        console.log("widthSizeNodes" , widthSizeNodes);
+        const updateNodes = await cateModel.update(
+            {
+                lft: this.lft - widthSizeNodes,
+                rgt: this.rgt - widthSizeNodes
+            },
+            {
+                where: {
+                    [Op.and]: [{
+                        lft: { [Op.gte]: cateRecordById.rgt, },
+                    },
+                    {
+                        rgt: { [Op.gte]: cateRecordById.rgt, }
+                    }
+                    ]
+                }
+            }
+        );
+
+        return true;
+        } catch (err) {
+            console.log("ERR" , err);
+            return false
+        }
     }
+
 }
 
 module.exports = categoryService
