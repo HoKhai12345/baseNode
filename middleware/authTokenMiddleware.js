@@ -8,7 +8,6 @@ module.exports = async (req, res, next) => {
     // Tách chuỗi url thành mảng 
     var arrayUrl = stringUrl.split('/');
     const prefixPage = arrayUrl[3] ? arrayUrl[3] : 0;
-    console.log("prefixPage", prefixPage);
     // Lấy ra được các chuyên mục muốn được vào thao tác 
     if (req.header('Authorization') != undefined) {
         token = req.header('Authorization').replace('Bearer ', '');
@@ -23,13 +22,12 @@ module.exports = async (req, res, next) => {
     }
     try {
         const users = jwt.verify(token, process.env.PRIVATE_KEY);
-        console.log("decoded", users);
         const roleUsers = await usersService.checkRole(users.userId);
         if (roleUsers === false) {
-            return res.status(401).json({
+            return res.status(403).json({
                 status: 0,
-                code: 401,
-                message: "Không tìm thấy token hợp lệ"
+                code: 403,
+                message: "Bạn không có quyền truy cập"
             });
         } else {
             arrayRoleUser = roleUsers.roles;
@@ -37,7 +35,6 @@ module.exports = async (req, res, next) => {
             var fillRoleAdmin = arrayRoleUser.filter(function (roles) {
                 return roles.id == 1;
             });
-            console.log("fillRole.length", fillRoleAdmin.length);
             if (!fillRoleAdmin || fillRoleAdmin.length == 0) {
                 if (prefixPage == 'posts') {
                     next();
@@ -45,10 +42,10 @@ module.exports = async (req, res, next) => {
                 else if (prefixPage == 'cate') {
                     next();
                 } else {
-                    return res.status(401).json({
+                    return res.status(403).json({
                         status: 0,
-                        code: 401,
-                        message: "Không tìm thấy token hợp lệ"
+                        code: 403,
+                        message: "Bạn không có quyền truy cập"
                     });
                 }
             } else {

@@ -3,7 +3,6 @@ module.exports = {
 
     index: async(req, res) => {
         // Find all posts
-        console.log("req.query" , req.query);
         // khai báo khởi tạo đối tượng options
         var options = {};
         // check lọc trường name

@@ -2,7 +2,6 @@
 module.exports = async (req, res, next) => {
   
     try {
-        console.log("req.query.age" , req.query.age);
         const checkAge = req.query.age ? req.query.age : 20
       
         if(checkAge > 20){

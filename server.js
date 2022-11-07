@@ -3,14 +3,26 @@ var path = require('path');
 var app = express();
 var fs = require("fs");
 var session = require('express-session')
-var app = express()
+var multer = require('multer');
+// require();
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true
 }))
+
+// Load file tĩnh trong thư mục storage
+app.use(express.static('storage'))
+
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+var bodyParser = require('body-parser');
+
+// Put these statements before you define any routes.
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+
 var storage = require('node-persist');
 require('dotenv').config()
 
@@ -20,16 +32,17 @@ app.get('/', function (req, res) {
   res.send('Hello POST');
 })
 app.use(session({
-  resave: true, 
-  saveUninitialized: true, 
-  secret: 'somesecret', 
-  cookie: { maxAge: 60000 }}));
+  resave: true,
+  saveUninitialized: true,
+  secret: 'somesecret',
+  cookie: { maxAge: 60000 }
+}));
 
 
-fs.readdir(path.join('modules'), (err, data) => { 
-  return data.forEach(module => { 
-    console.log("module" , module);
-    require(`./modules/${module}/router`)(app) 
+fs.readdir(path.join('modules'), (err, data) => {
+  return data.forEach(module => {
+    // console.log("module" , module);
+    require(`./modules/${module}/router`)(app)
   })
 })
 

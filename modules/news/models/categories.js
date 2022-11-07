@@ -13,12 +13,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Categories.hasMany(models.Products, { as: "products" });
-      models.Categories.hasMany(models.Posts, { as: "posts" });
+      // models.Categories.hasMany(models.Products, { as: "products" });
+      // models.Categories.hasMany(models.Posts, { as: "posts" });
     }
   }
   Categories.init({
     name: DataTypes.STRING,
+    path: DataTypes.STRING,
+    status: DataTypes.INTEGER,
+    lft: DataTypes.INTEGER,
+    rgt: DataTypes.INTEGER
   }, {
     sequelize: sequelize,
     tableName: 'categories',
@@ -38,18 +42,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    path: {
+      type: DataTypes.STRING,
+    },
+    status: {
+      type: DataTypes.INTEGER
+    },
+    lft: {
+      type: DataTypes.INTEGER
+    },
+    rgt: {
+      type: DataTypes.INTEGER
+    }
   });
 
-  // // `sequelize.define` also returns the model
-  // console.log(Cate === sequelize.models.Categories); // true
-  // Cate.hasMany(Products, { as: "products" });
-  // var promise = new Promise(function (resolve, reject) {
-  //   const test = Cate.findAll({ include: ["products"] });
-  //   resolve(test);
-  // });
-  // promise.then(function (data) {
-  //   // console.log("DATA" , data);
-  // })
   return Categories
 
   //! Define relationship to each class here
